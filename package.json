@@ -1,0 +1,19 @@
+{
+  "name": "check-license",
+  "version": "0.0.1",
+  "author": "Rustam Irzaev <irzaevrustam@gmail.com>",
+  "keywords": [
+    "license"
+  ],
+  "description": "Check licence of each package in node_modules",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RustamIrzaev/check-license.git"
+  },
+  "main": "index.js",
+  "scripts": {
+  },
+  "license": "MIT",
+  "devDependencies": {
+  }
+}
