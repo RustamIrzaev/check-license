@@ -3,35 +3,82 @@
 const fs = require('fs');
 const path = require('path');
 
-// let src = path.join(__dirname, 'node_modules');
-let src = path.join(__dirname, '../invo/website/node_modules');
+const NODE_MODULES = 'node_modules';
+const PACKAGE_JSON = 'package.json';
+const NO_LICENSE = 'no license';
+const TYPE_DEFAULT = '0';
+const TYPE_ERROR = '31';
+const TYPE_SUCCESS = '32';
+const TYPE_INFO = '33';
 
-// let options = {
-//     verbose: true,
-//     stat: true
-// };
+let options = {
+    verbose: false,
+    stat: true
+};
 
 let data = [];
+let stats = {};
+
+function print(type, message) {
+    console.log(`\x1b[${type}m${message}\x1b[0m`);
+}
+
+function getNodeModulesFolder() {
+    let current = process.cwd();
+    let pathToNodeModules = path.join(current, NODE_MODULES);
+
+    return pathToNodeModules;
+}
+
+function checkArgs() {
+    let args = process.argv;
+
+    if (args.length < 3) {
+        return;
+    }
+
+    for (let i = 2; i < args.length; i++) {
+        if (args[i] === '-v') {
+            options.verbose = !options.verbose;
+        } else if (args[i] === '-s') {
+            options.stat = !options.stat;
+        }
+    }
+}
 
 function check() {
-    if (!fs.existsSync(src)) { return; }
-    let folders = fs.readdirSync(src);
+    checkArgs();
 
-    folders = folders.filter(file => {
-        let filePath = path.join(src, file);
-        let stats = fs.statSync(filePath);
+    let src = getNodeModulesFolder();
+    print(TYPE_INFO, `checking ${src}`);
 
-        return stats.isDirectory() && file !== '.bin';
+    if (!fs.existsSync(src)) { 
+        print(TYPE_ERROR, 'Can\'t find node_modules folder');
+        return; 
+    }
+
+    let modules = fs.readdirSync(src);
+
+    modules = modules.filter(singleModule => {
+        let fullPath = path.join(src, singleModule);
+        let stats = fs.statSync(fullPath);
+
+        return stats.isDirectory() && singleModule !== '.bin';
     });
+
+    if (!modules.length) {
+        print(TYPE_ERROR, 'node_modules is empty');
+        return;
+    }
 
     data = [];
 
-    folders.forEach(file => {
-        let packageJson = path.join(src, file, 'package.json');
+    modules.forEach(file => {
+        let packageJson = path.join(src, file, PACKAGE_JSON);
 
         if (fs.existsSync(packageJson)) {
             let obj = JSON.parse(fs.readFileSync(packageJson, 'utf8'));
-            let license = 'no license';
+            let license = NO_LICENSE;
 
             if (obj.hasOwnProperty('license')) {
                 let lic = obj.license;
@@ -45,32 +92,58 @@ function check() {
 
             data.push({ package: file, license: license });
 
-            console.log(`[${file}] license: ${license}`);
-            //console.log(`\x1b[33m[${file}] license: ${license}\x1b[0m`);
+            if (options.verbose) {
+                console.log(`[${file}] uses ${license}`);
+            }
         }
     });
 
-    //console.log(JSON.stringify(data));
-    printStat();
-
-    return data;
+    if (options.stat) {
+        calculateStats();
+        printStats();
+    }
+    
+    print(TYPE_SUCCESS, 'completed');
 }
 
-function printStat() {
-    let stat = {};
-
+function calculateStats() {
     data.forEach(item => {
-        if (stat[item.license]) {
-            stat[item.license] += 1;
+        if (stats[item.license]) {
+            stats[item.license] += 1;
         } else {
-            stat[item.license] = 1;
+            stats[item.license] = 1;
         }
     });
+}
 
-    console.log('-- STAT --');
+function printStats() {
+    print(TYPE_INFO, `-- STATS [${data.length}] --`);
 
-    for (let lic in stat) {
-        console.log(lic);
+    for (let lic in stats) {
+        mapLicense(lic);
+    }
+}
+
+function mapLicense(license) {
+    const mapData = {
+        'MIT': TYPE_SUCCESS,
+
+        'no license': TYPE_ERROR,
+        'Unlicense': TYPE_ERROR
+    };
+
+    let found = false;
+
+    for (let data in mapData) {
+        if (data.toLowerCase() === license.toLowerCase()) {
+            found = true;
+            print(mapData[data], `> ${license}`);
+            break;
+        }
+    }
+
+    if (!found) {
+        print(TYPE_DEFAULT, `> ${license}`);
     }
 }
 
