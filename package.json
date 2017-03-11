@@ -1,6 +1,6 @@
 {
   "name": "check-license",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "author": "Rustam Irzaev <irzaevrustam@gmail.com>",
   "keywords": [
     "license"
@@ -11,11 +11,9 @@
     "url": "https://github.com/RustamIrzaev/check-license.git"
   },
   "main": "index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "license": "MIT",
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "preferGlobal": true,
   "bin": {
     "check-license": "bin/exec.js"
