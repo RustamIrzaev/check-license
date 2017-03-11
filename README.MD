@@ -2,7 +2,7 @@
 
 Just do a license check of your packages.
 
-![Standart Output](https://github.com/RustamIrzaev/check-license/blob/master/images/standard_out.png)
+![Standart Output](images/standard_out.png)
 
 ## Installation
 
@@ -28,4 +28,4 @@ Under MIT license.
 
 **Verbose mode**
 
-![Verbose Output](https://github.com/RustamIrzaev/check-license/blob/master/images/verbose_out.png)
+![Verbose Output](images/verbose_out.png)
