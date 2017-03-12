@@ -19,6 +19,10 @@ Additional commands:
 * -s    - print statistics
 
 
+## Contributing
+
+I'm still waiting for PRs 🐈
+
 ## License
 
 Under MIT license.
