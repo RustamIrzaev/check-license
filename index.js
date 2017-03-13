@@ -12,8 +12,7 @@ const TYPE_SUCCESS = '32';
 const TYPE_INFO = '33';
 
 let options = {
-    verbose: false,
-    stat: true
+    verbose: false
 };
 
 let data = [];
@@ -40,8 +39,6 @@ function checkArgs() {
     for (let i = 2; i < args.length; i++) {
         if (args[i] === '-v') {
             options.verbose = !options.verbose;
-        } else if (args[i] === '-s') {
-            options.stat = !options.stat;
         }
     }
 }
@@ -98,10 +95,8 @@ function check() {
         }
     });
 
-    if (options.stat) {
-        calculateStats();
-        printStats();
-    }
+    calculateStats();
+    printStats();
     
     print(TYPE_SUCCESS, 'completed');
 }
