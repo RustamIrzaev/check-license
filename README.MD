@@ -16,7 +16,6 @@ Do `check-license` from your project folder.
 Additional commands:
 
 * -v    - verbose mode (prints every module with license type)
-* -s    - print statistics
 
 
 ## Contributing
